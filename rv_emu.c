@@ -40,7 +40,7 @@ void rv_init(struct rv_state *rsp, uint32_t *func,
     rsp->regs[A3] = a3;
 }
 
-void run_r_type(struct rv_state *rsp, uint32_t iw) {
+void emu_r_type(struct rv_state *rsp, uint32_t iw) {
     uint32_t rd = (iw >> 7) & 0b1111;
     uint32_t rs1 = (iw >> 15) & 0b11111;
     uint32_t rs2 = (iw >> 20) & 0b11111;
@@ -54,7 +54,7 @@ void run_r_type(struct rv_state *rsp, uint32_t iw) {
     rsp->pc += 4; // Next instruction
 }
 
-void run_jalr(struct rv_state *rsp, uint32_t iw) {
+void emu_jalr(struct rv_state *rsp, uint32_t iw) {
     uint32_t rs1 = (iw >> 15) & 0b1111;  // Will be ra (aka x1)
     uint64_t val = rsp->regs[rs1];  // Value of regs[1]
 
@@ -75,11 +75,11 @@ void rv_one(struct rv_state *rsp) {
     switch (opcode) {
         case 0b0110011:
             // R-type instructions have two register operands
-            run_r_type(rsp, iw);
+            emu_r_type(rsp, iw);
             break;
         case 0b1100111:
             // JALR (aka RET) is a variant of I-type instructions
-            run_jalr(rsp, iw);
+            emu_jalr(rsp, iw);
             break;
         default:
             unsupported("Unknown opcode: ", opcode);
